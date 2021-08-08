@@ -30,13 +30,11 @@ export class ListComponent implements OnInit {
   ngOnInit(): void {
     this.loading = true;
     this.getHeroesFromService();
-    console.log(this.dataSource)
   }
 
   showSuggestions() {
     this.heroesService.getSuggestions(this.searchTerm)
     .subscribe(heroes => this.heroes = heroes);
-    console.log(this.searchTerm)
   }
 
   search(searchTerm: string) {
@@ -53,7 +51,6 @@ export class ListComponent implements OnInit {
 
   cleanResults() {
     this.getHeroesFromService();
-    console.log(this.dataSource)
     this.searchTerm = '';
   }
 
