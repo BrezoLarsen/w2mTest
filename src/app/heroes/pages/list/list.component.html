@@ -1,0 +1,76 @@
+<div class="wrapper" *ngIf="loading; else heroListDiv">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div class="container">
+  <ng-template #heroListDiv>
+    <h2>Listado de héroes</h2>
+
+    <mat-form-field>
+      <mat-label>Buscar</mat-label>
+      <input type="text"
+        placeholder="Escoge uno"
+        aria-label="Buscar"
+        matInput
+        [(ngModel)]="searchTerm"
+        [matAutocomplete]="auto"
+        (input)="showSuggestions()">
+      <mat-autocomplete autoActiveFirstOption
+        #auto="matAutocomplete"
+        (optionSelected)="searchOption($event)">
+        <mat-option *ngFor="let hero of heroes" [value]="hero">
+          {{hero.superhero}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+    <button mat-button (click)="search(searchTerm)">Buscar</button>
+    <button mat-button (click)="cleanResults()">Ver todo</button>
+
+    <table class="mat-elevation-z8" mat-table [dataSource]="dataSource" *ngIf="dataSource">
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+        <td mat-cell *matCellDef="let hero" class="link" [routerLink]="['/heroes/detalle', hero.id]" primary> {{hero.superhero}} </td>
+      </ng-container>
+
+      <!-- Alter-ego Column -->
+      <ng-container matColumnDef="alter_ego">
+        <th mat-header-cell *matHeaderCellDef> Alter Ego </th>
+        <td mat-cell *matCellDef="let hero"> {{hero.alter_ego}} </td>
+      </ng-container>
+
+      <!-- Publisher Column -->
+      <ng-container matColumnDef="publisher">
+        <th mat-header-cell *matHeaderCellDef> Editorial </th>
+        <td mat-cell *matCellDef="let hero"> {{hero.publisher}} </td>
+      </ng-container>
+
+      <!-- First_appearance Column -->
+      <ng-container matColumnDef="first_appearance">
+        <th mat-header-cell *matHeaderCellDef> Primera aparición </th>
+        <td mat-cell *matCellDef="let hero"> {{hero.first_appearance}} </td>
+      </ng-container>
+
+      <!-- Characters Column -->
+      <ng-container matColumnDef="characters">
+        <th mat-header-cell *matHeaderCellDef> Caracteres </th>
+        <td mat-cell *matCellDef="let hero"> {{hero.characters}} </td>
+      </ng-container>
+
+      <!-- Characters Column -->
+      <ng-container matColumnDef="acctions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let hero">
+          <button mat-button (click)="goToEdit(hero)">EDITAR</button>
+          <button mat-button (click)="delete(hero)">BORRAR</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+  </ng-template>
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>
