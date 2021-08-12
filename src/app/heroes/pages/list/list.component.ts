@@ -18,10 +18,10 @@ export class ListComponent implements OnInit {
   public searchResults: Hero[] = [];
   public heroSelected: Hero;
   public dataSource: MatTableDataSource<Hero>;
-  public displayedColumns: string[] = ['name', 'alter_ego', 'publisher', 'first_appearance', 'characters', 'acctions'];
+  public displayedColumns: string[] = ['name', 'alterEgo', 'publisher', 'firstAppearance', 'characters', 'acctions'];
   public loading = false;
 
-  public searchTerm: string;
+  public searchTerm: string = '';
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -42,6 +42,9 @@ export class ListComponent implements OnInit {
   }
 
   searchOption(event: MatAutocompleteSelectedEvent) {
+
+    if (!event.option.value) return;
+
     const hero: Hero = event.option.value;
     this.searchTerm = hero.superhero;
     this.heroesService.getHeroById(hero.id)

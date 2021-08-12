@@ -1,0 +1,9 @@
+<h2 mat-dialog-title>¡Cuidado!</h2>
+<mat-dialog-content class="mat-typography">
+  <h3>Si borras a este héroe los villanos serán más poderosos</h3>
+  <p></p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Borrar</button>
+</mat-dialog-actions>
