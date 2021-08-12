@@ -11,8 +11,8 @@ import { HeroesService } from '../../services/heroes.service';
 })
 export class HeroComponent implements OnInit {
 
-  id: string;
-  hero: Hero;
+  public id: string;
+  public hero: Hero;
 
   constructor(
     private activatedRouter: ActivatedRoute,
@@ -26,7 +26,7 @@ export class HeroComponent implements OnInit {
     .subscribe(hero => this.hero = hero);
   }
 
-  back() {
+  public goToListPage() {
     this.router.navigate(['heroes/lista'])
   }
 

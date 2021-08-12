@@ -69,8 +69,11 @@ export class AddComponent implements OnInit {
     this._ngUnsuscribe.complete();
   }
 
+  public goToListPage() {
+    this.router.navigate(['heroes/lista'])
+  }
+
   public save() {
-    console.log(this.heroForm.value)
     this.showLoading = true;
 
     if (this.hero.id) {

@@ -3,6 +3,7 @@
 </div>
 
 <div class="container">
+
   <ng-template #formDiv>
     <h2>{{ title }}</h2>
     <form *ngIf="heroForm" [formGroup]="heroForm">
@@ -65,6 +66,7 @@
         </button>
       </div>
     </form>
+    <button class="custom-button" mat-button (click)="goToListPage()">Volver</button>
 
   </ng-template>
 </div>

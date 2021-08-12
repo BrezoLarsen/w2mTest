@@ -5,6 +5,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { finalize, switchMap } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogComponent } from '../../components/dialog/dialog.component';
 
 
 @Component({
@@ -19,29 +22,33 @@ export class ListComponent implements OnInit {
   public heroSelected: Hero;
   public dataSource: MatTableDataSource<Hero>;
   public displayedColumns: string[] = ['name', 'alterEgo', 'publisher', 'firstAppearance', 'characters', 'acctions'];
-  public loading = false;
+  public showLoading = false;
 
   public searchTerm: string = '';
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private heroesService: HeroesService) { }
+  constructor(
+    private heroesService: HeroesService,
+    private router: Router,
+    public dialog: MatDialog
+  ) { }
 
   ngOnInit(): void {
-    this.loading = true;
+    this.showLoading = true;
     this.getHeroesFromService();
   }
 
-  showSuggestions() {
+  public showSuggestions() {
     this.heroesService.getSuggestions(this.searchTerm)
     .subscribe(heroes => this.heroes = heroes);
   }
 
-  search(searchTerm: string) {
+  public search(searchTerm: string) {
     this.dataSource.filter = searchTerm;
   }
 
-  searchOption(event: MatAutocompleteSelectedEvent) {
+  public searchOption(event: MatAutocompleteSelectedEvent) {
 
     if (!event.option.value) return;
 
@@ -52,18 +59,28 @@ export class ListComponent implements OnInit {
       .subscribe();
   }
 
-  cleanResults() {
+  public cleanResults() {
     this.getHeroesFromService();
     this.searchTerm = '';
   }
 
-  goToEdit(clickedRow: Hero): void {
-    console.log('EDIT ', clickedRow.id)
+  public openConfirmDialog(clickedRow) {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '250px'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.delete(clickedRow);
+      }
+    });
   }
 
-  delete(clickedRow: Hero): void {
-    console.log('DELETE ', clickedRow.id)
-  }
+  private delete(clickedRow: Hero) {
+    this.showLoading = true;
+    this.heroesService.deleteHeroById(clickedRow.id)
+      .pipe(finalize(() => this.showLoading = false))
+      .subscribe(() => this.getHeroesFromService());
+    }
 
   private getHeroesFromService() {
     this.heroesService.getHeroes()
@@ -72,7 +89,7 @@ export class ListComponent implements OnInit {
   }
 
   private finalizeSubscription(): void {
-    this.loading = false;
+    this.showLoading = false;
     this.dataSource.paginator = this.paginator;
   }
 }
