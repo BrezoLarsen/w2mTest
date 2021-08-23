@@ -1,13 +1,13 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { HeroesService } from '../../services/heroes.service';
-import { Hero } from '../../interfaces/heroes.interface';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { finalize, switchMap } from 'rxjs/operators';
-import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { Subject } from 'rxjs';
+import { finalize, switchMap, takeUntil } from 'rxjs/operators';
 import { DialogComponent } from '../../components/dialog/dialog.component';
+import { Hero } from '../../interfaces/heroes.interface';
+import { HeroesService } from '../../services/heroes.service';
 
 
 @Component({
@@ -15,7 +15,7 @@ import { DialogComponent } from '../../components/dialog/dialog.component';
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss']
 })
-export class ListComponent implements OnInit {
+export class ListComponent implements OnInit, OnDestroy {
 
   public heroes: Hero[] = [];
   public searchResults: Hero[] = [];
@@ -23,15 +23,15 @@ export class ListComponent implements OnInit {
   public dataSource: MatTableDataSource<Hero>;
   public displayedColumns: string[] = ['name', 'alterEgo', 'publisher', 'firstAppearance', 'characters', 'acctions'];
   public showLoading = false;
-
-  public searchTerm: string = '';
+  public searchTerm = '';
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
+  private _ngUnsuscribe: Subject<void> = new Subject<void>();
+
   constructor(
     private heroesService: HeroesService,
-    private router: Router,
-    public dialog: MatDialog
+    public dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -39,32 +39,39 @@ export class ListComponent implements OnInit {
     this.getHeroesFromService();
   }
 
-  public showSuggestions() {
-    this.heroesService.getSuggestions(this.searchTerm)
-    .subscribe(heroes => this.heroes = heroes);
+  ngOnDestroy(): void {
+    this._ngUnsuscribe.next();
+    this._ngUnsuscribe.complete();
   }
 
-  public search(searchTerm: string) {
+  public showSuggestions(): void {
+    this.heroesService.getSuggestions(this.searchTerm)
+      .pipe(takeUntil(this._ngUnsuscribe))
+      .subscribe(heroes => this.heroes = heroes);
+  }
+
+  public search(searchTerm: string): void {
     this.dataSource.filter = searchTerm;
   }
 
-  public searchOption(event: MatAutocompleteSelectedEvent) {
+  public searchOption(event: MatAutocompleteSelectedEvent): void {
 
-    if (!event.option.value) return;
+    if (!event.option.value) { return; };
 
     const hero: Hero = event.option.value;
     this.searchTerm = hero.superhero;
     this.heroesService.getHeroById(hero.id)
       .pipe(switchMap(hero => this.dataSource.filter = hero.id))
+      .pipe(takeUntil(this._ngUnsuscribe))
       .subscribe();
   }
 
-  public cleanResults() {
+  public cleanResults(): void {
     this.getHeroesFromService();
     this.searchTerm = '';
   }
 
-  public openConfirmDialog(clickedRow) {
+  public openConfirmDialog(clickedRow): void {
     const dialogRef = this.dialog.open(DialogComponent, {
       width: '250px'
     });
@@ -75,16 +82,18 @@ export class ListComponent implements OnInit {
     });
   }
 
-  private delete(clickedRow: Hero) {
+  private delete(clickedRow: Hero): void {
     this.showLoading = true;
     this.heroesService.deleteHeroById(clickedRow.id)
       .pipe(finalize(() => this.showLoading = false))
+      .pipe(takeUntil(this._ngUnsuscribe))
       .subscribe(() => this.getHeroesFromService());
     }
 
-  private getHeroesFromService() {
+  private getHeroesFromService(): void {
     this.heroesService.getHeroes()
       .pipe(finalize(() => this.finalizeSubscription()))
+      .pipe(takeUntil(this._ngUnsuscribe))
       .subscribe(heroes => this.dataSource = new MatTableDataSource<Hero>(heroes));
   }
 

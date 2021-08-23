@@ -12,6 +12,6 @@ export interface Publisher {
 }
 
 export enum PublisherEnum {
-  DCComics = "DC Comics",
-  MarvelComics = "Marvel Comics"
+  DCComics = 'DC Comics',
+  MarvelComics = 'Marvel Comics'
 }

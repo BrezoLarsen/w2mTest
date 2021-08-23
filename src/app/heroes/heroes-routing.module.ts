@@ -34,7 +34,7 @@ const heroesRoutes: Routes = [
       }
     ]
   }
-]
+];
 
 @NgModule({
   imports: [

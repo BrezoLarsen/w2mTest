@@ -5,6 +5,11 @@ import { ErrorPageComponent } from './shared/error-page/error-page.component';
 
 const routes: Routes = [
   {
+    path: '',
+    redirectTo: 'heroes',
+    pathMatch: 'full'
+  },
+  {
     path: 'heroes',
     loadChildren: () => import('./heroes/heroes.module').then(module => module.HeroesModule) // LazyLoading
   },
@@ -16,7 +21,7 @@ const routes: Routes = [
     path: '**',
     redirectTo: '404'
   }
-]
+];
 
 @NgModule({
   imports: [

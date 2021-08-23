@@ -47,7 +47,7 @@
 
         <mat-form-field>
           <mat-label>Editorial:</mat-label>
-          <mat-select formControlName="publisher">
+          <mat-select formControlName="publisher" ngDefaultControl>
             <mat-option *ngFor="let publisher of publishers" [value]="publisher.id">
               {{publisher.id}}
             </mat-option>
@@ -67,6 +67,8 @@
       </div>
     </form>
     <button class="custom-button" mat-button (click)="goToListPage()">Volver</button>
+
+    <div class="error" *ngIf="serverError">Ha ocurrido un error, comprueba la conexión al servidor</div>
 
   </ng-template>
 </div>

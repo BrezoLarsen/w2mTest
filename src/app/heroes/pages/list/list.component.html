@@ -31,6 +31,12 @@
 
     <table class="mat-elevation-z8" mat-table [dataSource]="dataSource" *ngIf="dataSource">
 
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="9999">
+          No se han encontrado resultados.
+        </td>
+      </tr>
+
       <!-- Name Column -->
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> Nombre </th>

@@ -1,20 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
 
   theme = 'dark';
 
   constructor() { }
 
-  ngOnInit(): void {
-  }
-
-  switchTheme(theme: string) {
+  switchTheme(theme: string): void {
     this.theme = theme;
   }
 
